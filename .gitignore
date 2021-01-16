@@ -1,1 +1,3 @@
 /.idea/
+/cloud-server/target/
+/cloud-client/target/

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+<!--        <File name="FileAppender" fileName="logs/application-${date:yyyyMMdd}.log" immediateFlush="false" append="true">-->
+<!--            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
+<!--        </File>-->
+<!--        <File name="Json" fileName="logs/json-${date:yyyyMMdd}.log" bufferedIO="true" >-->
+<!--            <JSONLayout compact="true" locationInfo="true" complete="false" eventEol="true" properties="true" propertiesAsList="true"/>-->
+<!--        </File>-->
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+<!--            <AppenderRef ref="Json"/>-->
+<!--            <AppenderRef ref="FileAppender"/>-->
+        </Root>
+    </Loggers>
+</Configuration>
