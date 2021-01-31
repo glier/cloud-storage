@@ -10,5 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 public class UserStorageStructure implements Serializable {
     private User user;
-    private List<String> userStorageStructure;
+    private List<DirElement> userStorageStructure;
 }

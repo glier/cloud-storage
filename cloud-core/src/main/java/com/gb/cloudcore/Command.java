@@ -10,4 +10,6 @@ import java.io.Serializable;
 public class Command implements Serializable {
     private CommandEvent command;
     private User user;
+    private String serverPath;
+    private String clientPath;
 }
