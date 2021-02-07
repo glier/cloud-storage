@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,10 +42,6 @@ public class StorageUtil {
         return new UserStorageStructure(user, pathList);
     }
 
-    public static void DownloadFile(ChunkedFile file) {
-
-    }
-
     public static String getCurrentPath(User user, String path) {
         StringBuilder currentPath = new StringBuilder();
         currentPath
@@ -55,4 +52,25 @@ public class StorageUtil {
         return currentPath.toString();
     }
 
+    public static void renameDirOrFile(User user, String oldPath, String newPath) {
+        Path source = Paths.get(getCurrentPath(user, oldPath));
+        Path target = Paths.get(getCurrentPath(user, newPath));
+        try {
+            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+    }
+
+    public static void newDir(User user, String clientPath) {
+        Path newFileOrDir = Paths.get(getCurrentPath(user, clientPath));
+
+        try {
+            Files.createDirectory(newFileOrDir);
+            logger.info("CREATE DIR " + newFileOrDir);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

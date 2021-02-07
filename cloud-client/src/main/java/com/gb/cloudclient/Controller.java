@@ -7,11 +7,19 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,6 +40,7 @@ public class Controller implements Initializable {
     private Path currentPath;
     private FileChooser fileChooser;
 
+
     @FXML
     private TableView<FileTableRow> filesTableView;
 
@@ -45,10 +54,12 @@ public class Controller implements Initializable {
     private TableColumn<FileTableRow, Boolean> isDirectory;
 
 
+    @SneakyThrows
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         this.network = new Network(this);
-        this.user = new User("Alex");
+        //this.user = new User("Alex");
         this.currentPath = Paths.get("/");
         this.fileChooser = new FileChooser();
         filesTableView.setOnMousePressed(mouseEvent -> {
@@ -57,9 +68,11 @@ public class Controller implements Initializable {
             }
         });
         elementName.setCellValueFactory(cellData -> cellData.getValue().elementNameProperty());
+        elementName.setCellFactory(TextFieldTableCell.forTableColumn());
         elementSize.setCellValueFactory(cellData -> cellData.getValue().elementSizeProperty().asObject());
         lastModifiedTime.setCellValueFactory(cellData -> cellData.getValue().lastModifiedTimeProperty());
         isDirectory.setCellValueFactory(cellData -> cellData.getValue().isDirectoryProperty().asObject());
+
     }
 
     public void setStage(Stage stage) {
@@ -157,5 +170,33 @@ public class Controller implements Initializable {
 
     public String getCurrentPath() {
         return this.currentPath.toString();
+    }
+
+    public void nameEditCommit(TableColumn.CellEditEvent<FileTableRow, String> fileTableRowStringCellEditEvent) {
+        String oldPath = currentPath.toString() + "/" + fileTableRowStringCellEditEvent.getOldValue();
+        String newPath = currentPath.toString() + "/" + fileTableRowStringCellEditEvent.getNewValue();
+
+        logger.info(oldPath);
+        logger.info(newPath);
+
+        if (oldPath.endsWith(Constants.SET_NEW_FOLDER_NAME)) {
+            network.sendMessage(new Command(CommandEvent.DIR_CREATE, user, oldPath, newPath));
+            logger.info("NEW DIR SANDING");
+        } else {
+            network.sendMessage(new Command(CommandEvent.FILE_RENAME, user, oldPath, newPath));
+        }
+    }
+
+    public void dirNew(ActionEvent actionEvent) {
+        filesTableView.getItems().add(new FileTableRow(
+                new SimpleStringProperty(Constants.SET_NEW_FOLDER_NAME),
+                new SimpleLongProperty(0L),
+                new SimpleStringProperty(""),
+                new SimpleBooleanProperty(true)
+        ));
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

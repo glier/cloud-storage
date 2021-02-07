@@ -67,6 +67,17 @@ public class FileTransferHandler extends SimpleChannelInboundHandler<Object> {
                     ctx.writeAndFlush(uss);
                 }
             }
+
+            if (command.getCommand() == CommandEvent.FILE_RENAME) {
+                StorageUtil.renameDirOrFile(command.getUser(), command.getServerPath(), command.getClientPath());
+            }
+
+            if (command.getCommand() == CommandEvent.DIR_CREATE) {
+                StorageUtil.newDir(command.getUser(), command.getClientPath());
+                String serverDir = command.getServerPath().replaceAll(Constants.SET_NEW_FOLDER_NAME, "");
+                UserStorageStructure uss = StorageUtil.getUserStorageStructure(command.getUser(), serverDir);
+                ctx.writeAndFlush(uss);
+            }
         }
         if (o instanceof ChunkedFile) {
             ChunkedFile uploadFile = (ChunkedFile) o;
